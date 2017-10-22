@@ -1,6 +1,7 @@
 package com.dark.future.kafka_simple;
 
 import com.dark.future.kafka_simple.sender.Sender;
+import com.dark.future.kafka_simple.stream.StreamExample;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.CountDownLatch;
 
+import static com.dark.future.kafka_simple.JMSTopicsConfig.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -25,13 +27,15 @@ import static org.junit.Assert.assertEquals;
 
 public class KafkaSimpleApplicationTests {
 
-    public static final String HELLOWORLD_TOPIC = JMSTopicsConfig.HELLOWORLD_TOPIC;
     @Test
     public void contextLoads() {
     }
 
     @Autowired
     private Sender sender;
+
+    @Autowired
+    private StreamExample streamExample;
 
     @Autowired
     private JMSTestUtilsAsyncAOPConfig.MessageStartAspect messageStartAspect;
@@ -43,7 +47,13 @@ public class KafkaSimpleApplicationTests {
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     @ClassRule
-    public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, HELLOWORLD_TOPIC);
+    public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true,
+            HELLOWORLD_TOPIC,
+            HELLOWORLD_TOPIC1,
+            HELLOWORLD_TOPIC2,
+            HELLOWORLD_TOPIC3,
+            HELLOWORLD_TOPIC4
+    );
 
     @Before
     public void setUp() throws Exception {
@@ -75,6 +85,21 @@ public class KafkaSimpleApplicationTests {
         sender.send(HELLOWORLD_TOPIC, "Hello Spring Kafka!");
 
         assertEquals(0, countDownLatch2.getCount());
+    }
+
+    @Test
+    public void shouldStreamAndBatch() throws InterruptedException {
+        sender.send(HELLOWORLD_TOPIC1, "address street message1");
+
+        Thread.sleep(1000);
+        sender.send(HELLOWORLD_TOPIC2, "address street message2");
+
+        Thread.sleep(1000);
+        sender.send(HELLOWORLD_TOPIC3, "address street message3");
+
+        Thread.sleep(5000);
+
+        sender.send(HELLOWORLD_TOPIC1, "address street message4");
     }
 
 }

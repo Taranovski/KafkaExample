@@ -15,5 +15,21 @@ public class Receiver {
     @KafkaListener(topics = "${kafka.topic.helloworld}")
     public void receive(String payload) {
         LOGGER.info("received payload='{}'", payload);
+        System.out.println(payload);
     }
+
+//    @KafkaListener(topics = "${kafka.topic.helloworld1}")
+//    public void receive1(String payload) {
+//        LOGGER.info("received payload='{}'", payload);
+//    }
+//
+//    @KafkaListener(topics = "${kafka.topic.helloworld2}")
+//    public void receive2(String payload) {
+//        LOGGER.info("received payload='{}'", payload);
+//    }
+//
+//    @KafkaListener(topics = "${kafka.topic.helloworld3}")
+//    public void receive3(String payload) {
+//        LOGGER.info("received payload='{}'", payload);
+//    }
 }
